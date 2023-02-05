@@ -7,7 +7,7 @@
 - contains our intial approach to extract the data using tensorflow library
 
 ### 01_GNN_Project_Backup.ipynb
--contains more of a remodfied way to extract data using numpy library
+- contains more of a remodfied way to extract data using numpy library
 - a fuction call automatically strips the data
 
 ### 02_GNN_Project_Backup.ipynb
