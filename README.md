@@ -1,16 +1,16 @@
 # HPCC_GNN
 
-###Our idea is to obtain the whole data of an image and to play around a bit to see what can be done using python libraries 
-###then to embed the desired code blocks/snippets in ecl
+#### Our idea is to obtain the whole data of an image and to play around a bit to see what can be done using python libraries 
+#### then to embed the desired code blocks/snippets in ecl
 
-###00_GNN_Project_Backup.ipynb
+### 00_GNN_Project_Backup.ipynb
 - contains our intial approach to extract the data using tensorflow library
 
-###01_GNN_Project_Backup.ipynb
+### 01_GNN_Project_Backup.ipynb
 -contains more of a remodfied way to extract data using numpy library
 - a fuction call automatically strips the data
 
-###02_GNN_Project_Backup.ipynb
+### 02_GNN_Project_Backup.ipynb
 - contains the approach using struct module
 - more or less like a manual method to strip and extract required data
 
