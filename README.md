@@ -16,5 +16,7 @@ There are three jupyter notebooks:-
 - contains the approach using struct module
 - more or less like a manual method to strip and extract required data
 
+### 03_GNN_Project_Backup.ipynb
+-An attempt to extract pixel data from jpeg images
 
 ## all the three notebooks contains the trial and error methods and our rough work used...... to refer/access the code snippets directly we are attaching a python file named "GNN_code_snippets_from_pynotebook.py"
