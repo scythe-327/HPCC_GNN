@@ -173,5 +173,89 @@ print(image)
 
 
 ####----------------------------------------------------------- EOF --------------------------------------------------------------------------------------------------------
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+######----------------------------------------- Contents in 03_GNN_Project_Backup.ipynb  ------------------------------------------------------------------------------------
 
 
+# -This note book is the iterartion 03 of the HPCC_GNN_Project-
+# 1.Struct.unpack  is used to strip the headers, in the JPEG images.
+# 2.A manual function is written therfore ensures a higher control over the data
+# 3.Assumes that the input jpeg_data has already been decoded into raw image data, which may not be the case for all JPEG images.
+import io
+from PIL import Image
+import binascii
+import numpy as np
+from io import BytesIO
+
+
+# Since the blob spraying returns the hex data of an image , we are trying to simulate the same by using io and Pil library. (In this note book we have used a png format)
+img=Image.open("C:/Users/rohan/Desktop/uktkjxhcb/sampleFormats/902587.jpg")
+print(img)
+
+
+
+# Uing hexlify() imported from binascii library to obtain the hex data of the image.
+with open("C:/Users/rohan/Desktop/uktkjxhcb/sampleFormats/902587.jpg", "rb") as image_file:
+    image_hex = binascii.hexlify(image_file.read())
+    # print(image_he
+    print(image_hex[:1500])
+    
+    
+#  The hex data into binary data using unhexlify() function.   
+binary_data = binascii.unhexlify(image_hex)
+
+
+
+# You can access the height and width of a JPEG image using 
+def get_jpeg_dimensions(jpeg_data):
+    # Open the JPEG data as an image using the Pillow library
+    image = Image.open(io.BytesIO(jpeg_data))
+
+    # Get the width and height of the image
+    width, height = image.size
+
+    return width, height
+width,height=get_jpeg_dimensions(binary_data)
+print(width,height)
+
+
+
+
+# Extractring pixel data
+
+
+def decode_jpeg(jpeg_data):
+    # Open the JPEG data as an image using the Pillow library
+    image = Image.open(io.BytesIO(jpeg_data))
+
+    # Access the raw image data as a binary string
+    raw_image_data = image.tobytes()
+
+    return raw_image_data
+def convert_to_rgb(raw_image_data):
+    # Convert the raw image data into a format suitable for processing
+    image = Image.frombytes("RGB", (width, height), raw_image_data)
+
+    # Access the image data as a binary string
+    image_data = image.tobytes()
+
+    return image_data
+def extract_pixel_data(jpeg_data):
+    # Decode the JPEG data
+    raw_image_data = decode_jpeg(jpeg_data)
+
+    # Convert the raw image data into a format suitable for processing
+    image_data = convert_to_rgb(raw_image_data)
+
+    # Access the pixel data
+    pixels = []
+    for i in range(0, len(image_data), 3):
+        # Unpack the next three bytes as three 8-bit values representing red, green, and blue
+        r, g, b = struct.unpack("BBB", image_data[i:i+3])
+        pixels.append((r, g, b))
+
+    return pixels
+jpeg_data = binary_data
+print(extract_pixel_data(jpeg_data))
+# thus it is easy to convert the binary pixel data obtained into tensors via nparray
+    
