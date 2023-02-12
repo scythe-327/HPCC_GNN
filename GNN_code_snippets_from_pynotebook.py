@@ -258,4 +258,79 @@ def extract_pixel_data(jpeg_data):
 jpeg_data = binary_data
 print(extract_pixel_data(jpeg_data))
 # thus it is easy to convert the binary pixel data obtained into tensors via nparray
-    
+
+####----------------------------------------------------------- EOF --------------------------------------------------------------------------------------------------------
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+######----------------------------------------- Contents in 04_GNN_Project_Backup.ipynb  ------------------------------------------------------------------------------------
+
+
+
+# -This note book is the iterartion 04 of the HPCC_GNN_Project-
+
+# References:https://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
+# 1.Image type being processed is BMP
+# 2.A manual function using struct.unpack is written which ensures a higher control over the data
+# 3.The main aim is to extract the pixel data from the hexdata generated from spraying the data.
+
+
+
+
+import io
+import struct
+from PIL import Image
+import binascii
+import numpy as np
+from io import BytesIO
+
+# Since the blob spraying returns the hex data of an image , we are trying to simulate the same by using io and Pil library.
+# (In this note book we have used a BMP format)
+# img=Image.open("C:/Users/rohan/Pictures/Camera Roll/X13_wallpaper_final_16x9_FHD.jpg")
+img=Image.open("C:/Users/rohan/Desktop/uktkjxhcb/sampleFormats/sample_1920x1280_BMP.bmp")
+print(img)
+
+
+# Uing hexlify() imported from binascii library to obtain the hex data of the image.
+with open("C:/Users/rohan/Desktop/uktkjxhcb/sampleFormats/sample_1920x1280_BMP.bmp", "rb") as image_file:
+    image_hex = binascii.hexlify(image_file.read())
+    # print(image_he
+    print(image_hex[:1500])
+ 
+
+# The hex data into binary data using unhexlify() function.
+binary_data = binascii.unhexlify(image_hex)
+
+
+# struct.unpack returns a tuple, even if it contains only one value
+# And hence we need to compare it individually
+# The BMP format uses the two-byte sequence 0x42 0x4D
+
+
+def is_bitmap(image_hex):
+    bmp_signature = b'BM'
+    unpacked_signature = struct.unpack("2B", binary_data[:2])
+    return bytes([unpacked_signature[0]]) == bmp_signature[:1] and bytes([unpacked_signature[1]]) == bmp_signature[1:]
+print(is_bitmap(image_hex))
+
+
+# Pixels are stored "upside-down" with respect to normal image raster scan order, starting in the lower left corner, going from left to right,
+# and then row by row from the bottom to the top of the image.2 Uncompressed Windows bitmaps can also be stored from the top row to the bottom, 
+# if the image height value is negative.(https://grapherhelp.goldensoftware.com/subsys/subsys_bitmap_file_description.htm)
+# struct unpack is used to extract these header in the form of "<IHHIIIIIIII "
+def extract_pixel_data(image_hex):
+    # Unpack the header information from the binary data
+    header = struct.unpack("<IHHIIIIIIII", image_hex[:40])
+    image_width = header[6]
+    image_height = header[7]
+    pixel_offset = header[10]
+# Below we are calculating the pixel data size
+# Since the BMP image must be a multiple of 4 so it will be just rounded to the nearest 4's multiple (https://stackoverflow.com/questions/15313792/what-should-we-do-with-a-bitmap-file-when-its-rowsize-isnt-multiple-of-4)
+    row_size = (image_width * 3 + 3) & ~3
+    image_size = row_size * abs(image_height)
+
+
+    pixel_data = image_hex[pixel_offset:pixel_offset + image_size]
+
+    return pixel_data
+pixel_data = extract_pixel_data(binary_data)
+# printing the first 1000 indexes of  pixel data for verification purposes
+print(pixel_data[:1000])
