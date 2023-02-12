@@ -2,6 +2,12 @@
 # then to embed the desired code blocks to ecl
 # the below codes conatins python snippets we tried
 # for better understanding cases why we used any of the code snippetes below pls refer the 3 notebooks in this repo :)
+# INDEX:
+# 00_GNN_Project_Backup----------0008-0057
+# 01_GNN_Project_Backup----------0060-0106
+# 02_GNN_Project_Backup----------0112-0176
+# 03_GNN_Project_Backup----------0183-0266
+# 04_GNN_Project_Backup----------0270-0328
 
 
 import io
