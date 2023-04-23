@@ -24,7 +24,7 @@ There are three jupyter notebooks:-
 -An attempt to extract pixel data from BMP images
 -Using manual method to strip the header.
 
-###04_GNN_Project_Backup.ipynb
+### 05_GNN_Project_Backup.ipynb
 
 -we were asked to use the function NPList2Tens which needed the nparray as its parameter along with the correct shape , this is just the modified verison of the '#01_GNN_Project_backup'
 -To obtain the size of the nparray we are utilizing the np.expanddims
