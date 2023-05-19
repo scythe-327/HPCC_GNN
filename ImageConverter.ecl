@@ -8,7 +8,7 @@ t_Tensor := Tensor.R4.t_Tensor;
 
 EXPORT ImageConverter := MODULE
 
-
+    //ACTIVITY is used to run the python program in all the nodes
     EXPORT STREAMED DATASET(t_Tensor) pyConvertImages(STREAMED DATASET(Types.ImgRec) imgs) := EMBED(Python:activity)
         import cv2
         import numpy as np
@@ -77,6 +77,13 @@ EXPORT ImageConverter := MODULE
                 indx += sliceSize
 
         Np2Tens = _Np2Tens
+        #this is a generator function to iterate through multiple images
+        #generator function is needed as Np2Tens doesn't return anything but yeilds.
+        #the np.frombuffer interprets a buffer as a 1-dimensional array(here interpreting whole image data into 1d array).
+        #plt.imread is used to decode the image,(i.e reads an image content using ByteIO function and returns the numpy.array).
+        #the imread() function is passed an option parameter('ext' in this case), which takes in the image format, format is extarcted by spliting the filename with '.'.
+        #also, Np2Tens funtion takes care of ndarray to float values, thats why not explicitly not converting the ndarray to float value
+        #here in the inner for-loop, we are calling the Np2tens function with optional parameter (wi=id, which is setting workitem to image id) which yields the tensors.
         def generateTensors(imageRecs):
             for rec in imageRecs:
                 id,filename,img = rec
@@ -86,7 +93,8 @@ EXPORT ImageConverter := MODULE
                 image = plt.imread(io.BytesIO(image_np), ext)
                 for ten in Np2Tens(image,wi=id):
                     yield ten
-
+        
+        #calling the generator function.
         try:
             return generateTensors(imgs)
         except:
@@ -94,9 +102,11 @@ EXPORT ImageConverter := MODULE
             exc = tb.format_exc()
             assert False, exc
     ENDEMBED;
-
+    
+    
+    //This fuction will Distribute the images received in ImgRec format equally to all nodes
     EXPORT DATASET(t_Tensor) convertImages(DATASET(Types.ImgRec) images) := FUNCTION
-        imagesD := DISTRIBUTE(images,id);
+        imagesD := DISTRIBUTE(images,id); //distributes the data to all nodes in a modular fasion, using id as the ditribution key.
         tensors := pyConvertImages(imagesD);
         tensors_s := SORT(tensors,wi,sliceId);
         return tensors_s;
