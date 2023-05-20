@@ -3,8 +3,7 @@ IMPORT Std;
 IMPORT GNN.Tensor;
 IMPORT $.Types;
 
-t_Tensor := Tensor.R4.t_Tensor;
-
+t_Tensor := Tensor.R4.t_Tensor;  //S Defining the t_Tensor type as a 4-dimensional tensor
 
 EXPORT ImageConverter := MODULE
 
@@ -17,8 +16,10 @@ EXPORT ImageConverter := MODULE
     // This dataset sprayed is taken to obtain the image matrix so as to be sent to the neural network. 
     // This module handles the preprocessing. It can convert records containing images as byte data into Tensor data 
     //to be able to use for conversion into a tensor and train the neural network using the tensor.  
-
     //ACTIVITY is used to run the python program in all the nodes
+    
+    //S Exporting the function pyConvertImages, which takes a streamed dataset of image records (imgs)
+    //S and returns a streamed dataset of t_Tensor
     EXPORT STREAMED DATASET(t_Tensor) pyConvertImages(STREAMED DATASET(Types.ImgRec) imgs) := EMBED(Python:activity)
         import cv2
         import numpy as np
@@ -27,9 +28,11 @@ EXPORT ImageConverter := MODULE
         import math
         global Np2Tens
         # Returns a streamed dataset of t_Tensor
+        #S Function to convert a NumPy array to t_Tensor and yield the tensor slices
         def _Np2Tens(a, wi=0, maxSliceOverride=0, isWeights = False):
             #   dTypeDict is used to convey the data type of a tensor.  It must be
             #   kept in sync with the Tensor data types in Tensor.ecl
+            #S  Data type dictionary to map tensor data types
             dTypeDict = {1:np.float32, 2:np.float64, 3:np.int32, 4:np.int64}
             dTypeDictR = {'float32':1, 'float64':2, 'int32':3, 'int64':4}
             #   Store the element size for each tensor data type.
@@ -45,8 +48,8 @@ EXPORT ImageConverter := MODULE
             indx = 0
             #datType = dTypeDictR[str(a.dtype)]
             #elemSize = dTypeSizeDict[datType]
-            datType = 1         #set for default, on other case use the declaration just above
-            elemSize = 4        #set for default, on other case use the declaration just above
+            datType = 1         # Set for default data type (float32), on other case use the declaration just above
+            elemSize = 4        # Set for default element size (4 bytes), on other case use the declaration just above
             if maxSliceOverride:
                 maxSliceSize = maxSliceOverride
             else:
