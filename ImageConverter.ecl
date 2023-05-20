@@ -27,7 +27,6 @@ EXPORT ImageConverter := MODULE
         import io
         import math
         global Np2Tens
-        # Returns a streamed dataset of t_Tensor
         #S Function to convert a NumPy array to t_Tensor and yield the tensor slices
         def _Np2Tens(a, wi=0, maxSliceOverride=0, isWeights = False):
             #   dTypeDict is used to convey the data type of a tensor.  It must be
