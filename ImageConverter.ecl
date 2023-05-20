@@ -8,6 +8,16 @@ t_Tensor := Tensor.R4.t_Tensor;
 
 EXPORT ImageConverter := MODULE
 
+   // Overview:
+    // This module tends towards the input, output and manipulation of images pertaining to neural network applications.  
+    // This makes sure that the users of GNN do not spend time trying to preprocess the image database, 
+    // as the images to be processed are read and generates the corresponding ECL tensors. 
+    
+    // The module is capable of taking datasets of images sprayed as a blob, usually with the prefix: [filename,filesize]
+    // This dataset sprayed is taken to obtain the image matrix so as to be sent to the neural network. 
+    // This module handles the preprocessing. It can convert records containing images as byte data into Tensor data 
+    //to be able to use for conversion into a tensor and train the neural network using the tensor.  
+
     //ACTIVITY is used to run the python program in all the nodes
     EXPORT STREAMED DATASET(t_Tensor) pyConvertImages(STREAMED DATASET(Types.ImgRec) imgs) := EMBED(Python:activity)
         import cv2
@@ -35,9 +45,8 @@ EXPORT ImageConverter := MODULE
             indx = 0
             #datType = dTypeDictR[str(a.dtype)]
             #elemSize = dTypeSizeDict[datType]
-
-            datType = 1
-            elemSize = 4
+            datType = 1         #set for default, on other case use the declaration just above
+            elemSize = 4        #set for default, on other case use the declaration just above
             if maxSliceOverride:
                 maxSliceSize = maxSliceOverride
             else:
@@ -90,13 +99,17 @@ EXPORT ImageConverter := MODULE
                 tokens = filename.split('.')
                 ext = tokens[1].lower()
                 image_np = np.frombuffer(img, dtype='uint8')
-                image = plt.imread(io.BytesIO(image_np), ext)
+                image = plt.imread(io.BytesIO(image_np), ext) #uncompresses the image data
                 for ten in Np2Tens(image,wi=id):
                     yield ten
         
         #calling the generator function.
         try:
             return generateTensors(imgs)
+        #The format_exc() function from the traceback module is called to retrieve the formatted traceback of the exception that occurred.
+        #The traceback string is stored in the variable exc.
+        #An assert statement is used with False as the condition and exc as the error message. This line effectively raises an assertion error, 
+        #with the traceback string as the error message.
         except:
             import traceback as tb
             exc = tb.format_exc()
@@ -105,6 +118,8 @@ EXPORT ImageConverter := MODULE
     
     
     //This fuction will Distribute the images received in ImgRec format equally to all nodes
+    //with multiple nodes running, timming of execution can be different for each, therefore tensors_s is declared with SORT,
+    //so that to put back the slices returned to its cannonical order.
     EXPORT DATASET(t_Tensor) convertImages(DATASET(Types.ImgRec) images) := FUNCTION
         imagesD := DISTRIBUTE(images,id); //distributes the data to all nodes in a modular fasion, using id as the ditribution key.
         tensors := pyConvertImages(imagesD);
@@ -115,4 +130,4 @@ EXPORT ImageConverter := MODULE
 
 
 
-END;
+END; //end of module
