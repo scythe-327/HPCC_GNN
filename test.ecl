@@ -4,8 +4,7 @@ IMPORT GNN.Tensor;
 IMPORT ImageConverter;
 IMPORT $.Types;
 
-
-
+// another Image RECORD, whith just the fuilename and image contentes, used for TRANSFORM of ImgRec
 rawImageRec := RECORD
     STRING filename;
     DATA image;
@@ -27,5 +26,4 @@ dat2 := PROJECT(dat,{UNSIGNED wi, UNSIGNED sliceId, SET OF UNSIGNED shape, UNSIG
 
 
 OUTPUT(dat2);
-//OUTPUT(dat,{nodeId,wi,sliceId,shape,sliceSize});
-//OUTPUT(dat);
+
