@@ -17,7 +17,7 @@ OUTPUT(ds);
 
 //ds2 transforms ImgRec to rawImageRec RECORD,
 //it sets the id to a counter for sequential id,
-//SELF:=LEFT takes the input record, it basically sets all other attributes to input record (in this case ImagRec)
+//SELF:=LEFT takes the input record, it basically sets all other attributes to input record (in this case ImgRec)
 ds2 := PROJECT(ds,TRANSFORM(Types.ImgRec,self.id:=COUNTER,SELF:=LEFT));
 
 OUTPUT(ds2);
