@@ -92,7 +92,7 @@ EXPORT ImageConverter := MODULE
         #the np.frombuffer interprets a buffer as a 1-dimensional array(here interpreting whole image data into 1d array).
         #plt.imread is used to decode the image,(i.e reads an image content using ByteIO function and returns the numpy.array).
         #the imread() function is passed an option parameter('ext' in this case), which takes in the image format, format is extarcted by spliting the filename with '.'.
-        #also, Np2Tens funtion takes care of ndarray to float values, thats why not explicitly not converting the ndarray to float value
+        #also, Np2Tens function takes care of ndarray to float values, thats why not explicitly not converting the ndarray to float value
         #here in the inner for-loop, we are calling the Np2tens function with optional parameter (wi=id, which is setting workitem to image id) which yields the tensors.
         def generateTensors(imageRecs):
             for rec in imageRecs:
@@ -119,8 +119,8 @@ EXPORT ImageConverter := MODULE
     
     
     //This fuction will Distribute the images received in ImgRec format equally to all nodes
-    //with multiple nodes running, timming of execution can be different for each, therefore tensors_s is declared with SORT,
-    //so that to put back the slices returned to its cannonical order.
+    //with multiple nodes running, timing of execution can be different for each, therefore tensors_s is declared with SORT,
+    //so that to put back the slices returned to its canonical order.
     EXPORT DATASET(t_Tensor) convertImages(DATASET(Types.ImgRec) images) := FUNCTION
         imagesD := DISTRIBUTE(images,id); //distributes the data to all nodes in a modular fasion, using id as the ditribution key.
         tensors := pyConvertImages(imagesD);
