@@ -3,7 +3,7 @@ IMPORT Std;
 IMPORT GNN.Tensor;
 IMPORT $.Types;
 
-t_Tensor := Tensor.R4.t_Tensor;  //S Defining the t_Tensor type as a 4-dimensional tensor
+t_Tensor := Tensor.R4.t_Tensor; 
 
 EXPORT ImageConverter := MODULE
 
@@ -18,8 +18,7 @@ EXPORT ImageConverter := MODULE
     //to be able to use for conversion into a tensor and train the neural network using the tensor.  
     //ACTIVITY is used to run the python program in all the nodes
     
-    //S Exporting the function pyConvertImages, which takes a streamed dataset of image records (imgs)
-    //S and returns a streamed dataset of t_Tensor
+
     EXPORT STREAMED DATASET(t_Tensor) pyConvertImages(STREAMED DATASET(Types.ImgRec) imgs) := EMBED(Python:activity)
         import cv2
         import numpy as np
