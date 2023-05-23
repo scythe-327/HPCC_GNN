@@ -35,4 +35,4 @@ There are three jupyter notebooks:-
 ## Please find the Final ECL files
 ### 1. ImageConverter.ecl
 ### 2. Types.ecl
-### 3. types.ecl
+### 3. test.ecl
